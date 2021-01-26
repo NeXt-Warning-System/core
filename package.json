@@ -1,0 +1,19 @@
+{
+  "name": "core",
+  "version": "0.0.1",
+  "description": "XWS Core Message Bus",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "pg": "8.5.1",
+    "pg-listen": "1.7.0"
+  },
+  "devDependencies": {},
+  "author": "DEFRA",
+  "license": "OGL-UK-3.0",
+  "engines": {
+    "node": "12"
+  }
+}

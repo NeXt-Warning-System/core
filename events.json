@@ -1,0 +1,22 @@
+{
+  "alert": {
+    "publish": "alert.publish"
+  },
+  "publish": {
+    "alert": {
+      "succeed": "publish.alert.succeed",
+      "failed": "publish.alert.failed"
+    }
+  },
+  "notification": {
+    "email": "notification.email",
+    "sms": "notification.sms",
+    "voice": "notification.voice"
+  },
+  "area": {
+    "publish": "area.publish"
+  },
+  "contact": {
+    "subscribe": "contact.subscribe"
+  }
+}
