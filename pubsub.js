@@ -1,21 +1,19 @@
-const listen = require('pg-listen')
+const client = require('amqplib')
 
-function pubsub (connectionString) {
-  const listener = listen({ connectionString })
+async function pubsub (amqpUri, topic) {
+  const connection = await client.connect(amqpUri)
+  const channel = await connection.createChannel()
+  await channel.assertExchange(topic, 'fanout', { durable: false })
 
-  return listener
+  return channel
 }
 
-async function publish (connectionString, channel, payload) {
-  const listener = pubsub(connectionString)
+async function publish (amqpUri, topic, payload) {
+  const channel = pubsub(amqpUri, topic)
 
-  await listener.connect()
-
-  const publishResult = await listener.notify(channel, payload)
-
-  listener.close()
+  const publishResult = channel.publish(topic, '', Buffer.from(JSON.stringify(payload)))
 
   return publishResult
 }
 
-module.exports = { pubsub, publish }
+module.exports = { client, publish }
