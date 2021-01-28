@@ -1,6 +1,6 @@
 const amqplib = require('amqplib')
 
-async function pubsub (url, topic) {
+async function createPubsubChannel (url, topic) {
   const connection = await amqplib.connect(url)
   const channel = await connection.createChannel()
   await channel.assertExchange(topic, 'fanout', { durable: false })
@@ -9,14 +9,14 @@ async function pubsub (url, topic) {
 }
 
 async function publish (url, topic, payload) {
-  const channel = await pubsub(url, topic)
+  const channel = await createPubsubChannel(url, topic)
   const publishResult = channel.publish(topic, '', Buffer.from(JSON.stringify(payload)))
 
   return publishResult
 }
 
 async function subscribe (url, topic, consumer) {
-  const channel = await pubsub(url, topic)
+  const channel = await createPubsubChannel(url, topic)
   const assertQueue = await channel.assertQueue('', { exclusive: true })
   await channel.bindQueue(assertQueue.queue, topic, '')
 
