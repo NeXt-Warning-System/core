@@ -1,6 +1,6 @@
 {
   "alert": {
-    "publish": "alert.publish"
+    "issued": "alert.issued"
   },
   "publish": {
     "alert": {
@@ -9,6 +9,7 @@
     }
   },
   "notification": {
+    "message": "notification.message",
     "email": "notification.email",
     "sms": "notification.sms",
     "voice": "notification.voice"

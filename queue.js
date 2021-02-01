@@ -1,30 +1,40 @@
-const amqplib = require('amqplib')
+const { toBuffer, connect } = require('./broker')
 
-async function createQueueChannel (url, queue) {
-  const connection = await amqplib.connect(url)
+async function createChannel (connection, queue) {
   const channel = await connection.createChannel()
-
   await channel.assertQueue(queue, { durable: true })
 
   return channel
 }
 
-async function enqueue (url, queue, payload) {
-  const channel = await createQueueChannel(url, queue)
-  const result = channel.sendToQueue(queue, Buffer.from(payload), { persistent: true })
-  channel.connection.close()
+/**
+ * Helper to enqueue a message to a queue.
+ * Useful when you don't want to manage the channel or connection.
+ * (Not currently used - maybe not useful?)
+ * @param {string} url - The broker url
+ * @param {string} topic - The topic
+ * @param {object} data - The data
+ */
+async function enqueue (url, queue, data) {
+  const connection = await connect(url)
+  const channel = await createChannel(connection, queue)
+  const content = toBuffer(data)
+  const sendResult = channel.sendToQueue(queue, content, { persistent: true })
 
-  return result
+  await channel.close()
+  await connection.close()
+
+  return sendResult
 }
 
-async function dequeue (url, queue, consumer) {
-  const channel = await createQueueChannel(url, queue)
+async function dequeue (channel, queue, consumer) {
   channel.prefetch(1)
-  const result = channel.consume(queue, msg => {
-    const json = msg.content.toString()
-    const payload = JSON.parse(json)
-    consumer(payload)
-    channel.ack(msg)
+
+  const result = channel.consume(queue, event => {
+    const json = event.content.toString()
+    const data = JSON.parse(json)
+    consumer(data)
+    channel.ack(event)
   })
 
   return result
@@ -32,5 +42,6 @@ async function dequeue (url, queue, consumer) {
 
 module.exports = {
   enqueue,
-  dequeue
+  dequeue,
+  createChannel
 }
