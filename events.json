@@ -1,23 +1,21 @@
 {
   "alert": {
-    "issued": "alert.issued"
+    "alert": {
+      "issued": "alert.alert.issued"
+    }
+  },
+  "notification": {
+    "alert": {
+      "created": "notification.alert.created"
+    },
+    "message": {
+      "created": "notification.message.created"
+    }
   },
   "publish": {
     "alert": {
       "succeed": "publish.alert.succeed",
       "failed": "publish.alert.failed"
     }
-  },
-  "notification": {
-    "message": "notification.message",
-    "email": "notification.email",
-    "sms": "notification.sms",
-    "voice": "notification.voice"
-  },
-  "area": {
-    "publish": "area.publish"
-  },
-  "contact": {
-    "subscribe": "contact.subscribe"
   }
 }
