@@ -6,16 +6,11 @@
   },
   "notification": {
     "alert": {
-      "created": "notification.alert.created"
+      "created": "notification.alert.created",
+      "published": "notification.alert.published"
     },
     "message": {
       "created": "notification.message.created"
-    }
-  },
-  "publish": {
-    "alert": {
-      "succeed": "publish.alert.succeed",
-      "failed": "publish.alert.failed"
     }
   }
 }
