@@ -2,7 +2,7 @@ const { eventSchema } = require('./events')
 const { fromBuffer, toBuffer, connect } = require('./broker')
 
 function validateEventData (topic, data) {
-  const schema = schema[topic]
+  const schema = eventSchema[topic]
 
   // Validate event data
   if (schema) {
