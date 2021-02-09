@@ -1,26 +1,12 @@
-const { eventSchema } = require('./events')
 const { fromBuffer, toBuffer, connect } = require('./broker')
+const validateEventData = require('./validate-event-data')
 
-function validateEventData (topic, data) {
-  const schema = eventSchema[topic]
-
-  // Validate event data
-  if (schema) {
-    const { error, value } = schema.validate(data)
-
-    // Throw if data is invalid
-    if (error) {
-      const message = error.message
-      throw new Error(`The event data for topic ${topic} is invalid. ${message}`)
-    }
-
-    // Update the data
-    data = value
-  }
-
-  return data
-}
-
+/**
+ * Helper to create a PubSub channel
+ *
+ * @param {object} connection - The broker connection
+ * @param {string} topic - The topic name
+ */
 async function createChannel (connection, topic) {
   const channel = await connection.createChannel()
 
@@ -53,9 +39,9 @@ async function publish (url, topic, data) {
 
 /**
  *
- * @param {ChannelModel} channel
- * @param {string} topic
- * @param {function} consumer
+ * @param {object} channel - The broker channel
+ * @param {string} topic - The topic name
+ * @param {function} consumer - The consumer callback function
  */
 async function subscribe (channel, topic, consumer) {
   const assertQueue = await channel.assertQueue('', { exclusive: true })
@@ -63,6 +49,7 @@ async function subscribe (channel, topic, consumer) {
 
   return channel.consume(assertQueue.queue, event => {
     const data = fromBuffer(event.content)
+
     validateEventData(topic, data)
     consumer(data)
   }, {
