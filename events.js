@@ -47,7 +47,7 @@ function flatten (obj) {
         }
 
         if (joi.isSchema(obj[name])) {
-          dict[keyName] = createSchema
+          dict[keyName] = obj[name]
           obj[name] = keyName
         } else if (typeof obj[name] === 'object') {
           // Continue recursing
