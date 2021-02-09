@@ -31,6 +31,8 @@ const eventsSchema = {
   'notification.message.created': createSchema()
 }
 
+// TODO: This commented code below works fine but maybe overkill.
+// If this file grows too big it'll be worthwhile (but need to factor out the side effects first)
 // `flatten` changes leaf nodes of the events
 // object from a `schema` to the dot-separated key `path`.
 // It also returns the a map of key paths to schema.
