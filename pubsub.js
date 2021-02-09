@@ -1,4 +1,25 @@
+const { eventSchema } = require('./events')
 const { fromBuffer, toBuffer, connect } = require('./broker')
+
+function validateEventData (topic, data) {
+  const schema = schema[topic]
+
+  // Validate event data
+  if (schema) {
+    const { error, value } = schema.validate(data)
+
+    // Throw if data is invalid
+    if (error) {
+      const message = error.message
+      throw new Error(`The event data for topic ${topic} is invalid. ${message}`)
+    }
+
+    // Update the data
+    data = value
+  }
+
+  return data
+}
 
 async function createChannel (connection, topic) {
   const channel = await connection.createChannel()
@@ -17,6 +38,8 @@ async function createChannel (connection, topic) {
  * @param {object} data - The data
  */
 async function publish (url, topic, data) {
+  validateEventData(topic, data)
+
   const connection = await connect(url)
   const channel = await createChannel(connection, topic)
   const content = toBuffer(data)
@@ -30,9 +53,9 @@ async function publish (url, topic, data) {
 
 /**
  *
- * @param {*} channel
- * @param {*} topic
- * @param {*} consumer
+ * @param {ChannelModel} channel
+ * @param {string} topic
+ * @param {function} consumer
  */
 async function subscribe (channel, topic, consumer) {
   const assertQueue = await channel.assertQueue('', { exclusive: true })
@@ -40,6 +63,7 @@ async function subscribe (channel, topic, consumer) {
 
   return channel.consume(assertQueue.queue, event => {
     const data = fromBuffer(event.content)
+    validateEventData(topic, data)
     consumer(data)
   }, {
     noAck: true
