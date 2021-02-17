@@ -7,75 +7,40 @@ function createSchema (keys) {
   return keys ? schema.keys(keys) : schema
 }
 
+const ALERT_ALERT_ISSUED = 'alert.alert.issued'
+const NOTIFICATION_ALERT_CREATED = 'notification.alert.created'
+const NOTIFICATION_ALERT_PUBLISHED = 'notification.alert.published'
+const NOTIFICATION_MESSAGE_CREATED = 'notification.message.created'
+
 const EVENTS = {
   alert: {
     alert: {
-      issued: 'alert.alert.issued'
+      issued: ALERT_ALERT_ISSUED
     }
   },
   notification: {
     alert: {
-      created: 'notification.alert.created',
-      published: 'notification.alert.published'
+      created: NOTIFICATION_ALERT_CREATED,
+      published: NOTIFICATION_ALERT_PUBLISHED
     },
     message: {
-      created: 'notification.message.created'
+      created: NOTIFICATION_MESSAGE_CREATED
     }
   }
 }
 
 const eventsSchema = {
-  'alert.alert.issued': createSchema(),
-  'notification.alert.created': createSchema(),
-  'notification.alert.published': createSchema(),
-  'notification.message.created': createSchema()
+  [ALERT_ALERT_ISSUED]: createSchema(),
+  [NOTIFICATION_ALERT_CREATED]: createSchema(),
+  [NOTIFICATION_ALERT_PUBLISHED]: createSchema(),
+  [NOTIFICATION_MESSAGE_CREATED]: createSchema()
 }
-
-// TODO: This commented code below works fine but maybe overkill.
-// If this file grows too big it'll be worthwhile (but need to factor out the side effects first)
-// `flatten` changes leaf nodes of the events
-// object from a `schema` to the dot-separated key `path`.
-// It also returns the a map of key paths to schema.
-// function flatten (obj) {
-//   const dict = {}
-//   const dot = '.'
-
-//   function _flatten (obj, dict, keyPrefix) {
-//     if (obj === null) {
-//       return dict
-//     }
-
-//     for (const name in obj) {
-//       if (Object.prototype.hasOwnProperty.call(obj, name)) {
-//         let keyName
-
-//         if (keyPrefix) {
-//           keyName = keyPrefix + dot + name
-//         } else {
-//           keyName = name
-//         }
-
-//         if (joi.isSchema(obj[name])) {
-//           dict[keyName] = obj[name]
-//           obj[name] = keyName
-//         } else if (typeof obj[name] === 'object') {
-//           // Continue recursing
-//           _flatten(obj[name], dict, keyName)
-//         } else {
-//           dict[keyName] = obj[name]
-//         }
-//       }
-//     }
-
-//     return dict
-//   }
-
-//   return _flatten(obj, dict, null)
-// }
-
-// const eventSchema = flatten(events)
 
 module.exports = {
   EVENTS,
-  eventsSchema
+  eventsSchema,
+  ALERT_ALERT_ISSUED,
+  NOTIFICATION_ALERT_CREATED,
+  NOTIFICATION_ALERT_PUBLISHED,
+  NOTIFICATION_MESSAGE_CREATED
 }
